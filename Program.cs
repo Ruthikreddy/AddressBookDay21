@@ -65,7 +65,10 @@ namespace AddressBook
                 Console.WriteLine("4. Delete a contact");
                 Console.WriteLine("5. Enter the city to display contacts living in it");
                 Console.WriteLine("6. Display contacts city wise");
-                Console.WriteLine("7. Exit");
+                Console.WriteLine("7. Display contacts city wise");
+                Console.WriteLine("8. Display sorted contacts state wise");
+                Console.WriteLine("9. Display sorted contacts zip wise");
+                Console.WriteLine("10. Exit");
                 choice_one = Convert.ToInt32(Console.ReadLine());
 
 
@@ -119,7 +122,7 @@ namespace AddressBook
                         var sortedList = ContList.OrderBy(si => si.getFname()).ToList();
                         foreach (Contact o in sortedList)
                         {
-                            Console.WriteLine(o.toString());
+                            Console.WriteLine(o.ToString());
                         }
 
                         break;
@@ -235,6 +238,31 @@ namespace AddressBook
                         foreach (KeyValuePair<string, int> kv in sT)
                         {
                             Console.WriteLine("The number of persons in {0} is {1} ", kv.Key, kv.Value);
+                        }
+                        break;
+                    case 7:
+                        Contact ctr = new Contact();
+                        ctr.SortByCity(ContList);
+                        foreach (Contact c in ContList)
+                        {
+                            Console.WriteLine(c);
+                        }
+                        break;//Print 
+                    case 8:
+                        Contact cts = new Contact();
+                        cts.SortByState(ContList);
+                        foreach (Contact c in ContList)
+                        {
+                            Console.WriteLine(c);
+                        }
+                        break;
+                    case 9:
+                        Contact ctd = new Contact();
+                        ctd.SortByZip(ContList);
+
+                        foreach (Contact c in ContList)
+                        {
+                            Console.WriteLine(c);
                         }
                         break;
                     default:

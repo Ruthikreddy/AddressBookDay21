@@ -16,6 +16,8 @@ namespace AddressBook
         private long zip;
         private long phoneNo;
         private string emailId;
+        private readonly int n;
+
 
         public Contact(string fname, string lname, string address, string city, string state, long zip, long phoneNo, string emailId)
         {
@@ -27,6 +29,9 @@ namespace AddressBook
             this.zip = zip;
             this.phoneNo = phoneNo;
             this.emailId = emailId;
+        }
+        public Contact()
+        {
         }
 
         public void setFname(string fname)
@@ -94,10 +99,38 @@ namespace AddressBook
             return emailId;
         }
 
-
-        public string toString()
+        public override string ToString()
         {
-            return this.fname + " " + this.lname + " " + this.state;
+            return "First Name: " + fname + ", " + "Last Name: " + lname + ", " + "Address: " + address + ", " + "City: " + city + ", " + "State: " + state + ", " + "Zip: " + zip + ", Phone Number: " + phoneNo + ", Email-id: " + emailId;
+        }
+        public override bool Equals(Object obj)
+        {
+            //Check for null and compare run-time types.
+            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+            {
+                return false;
+            }
+            else
+            {
+                Contact p = (Contact)obj;
+                return (fname == p.fname) && (lname == p.lname);
+            }
+        }
+        public override int GetHashCode()
+        {
+            return n;
+        }
+        public void SortByCity(List<Contact> contacts)
+        {
+            contacts.Sort((contact1, contact2) => contact1.city.CompareTo(contact2.city));
+        }
+        public void SortByState(List<Contact> contacts)
+        {
+            contacts.Sort((contact1, contact2) => contact1.state.CompareTo(contact2.state));
+        }
+        public void SortByZip(List<Contact> contacts)
+        {
+            contacts.Sort((contact1, contact2) => contact1.zip.CompareTo(contact2.zip));
         }
 
     }
