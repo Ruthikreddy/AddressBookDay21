@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 
@@ -114,11 +115,13 @@ namespace AddressBook
                     /// <summary>
                     /// Displays the entire address Book
                     /// </summary>
-                    case 2:
-                        foreach (Contact o in ContList)
+                    case 2: 
+                        var sortedList = ContList.OrderBy(si => si.getFname()).ToList();
+                        foreach (Contact o in sortedList)
                         {
                             Console.WriteLine(o.toString());
                         }
+
                         break;
                     /// <summary>
                     /// To Edit the Contact in the list
