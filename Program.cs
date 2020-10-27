@@ -2,26 +2,28 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
-
+using System.Security.Authentication;
+using System.IO;
 namespace AddressBook
 {
     class Program
     {
-
+        public static string filePath = @"C:\Users\HP\source\repos\CheckingAddress\AddressBook.txt";
         static void Main(string[] args)
         {
             Program p = new Program();
             int ch = 0; string NameofBook, bname_o;
             // To store new address book with name as Key and value as list
             Dictionary<string, List<Contact>> dict = new Dictionary<string, List<Contact>>();
-
             /// <summary>
             /// Creating Multiple Address Book and saving it with a name
             /// </summary>
-            while (ch != 3)
+            while (ch != 5)
             {
                 Console.WriteLine("1. Add a new Address Book");
                 Console.WriteLine("2. Add, edit or delete contacts in an exisiting address Book");
+                Console.WriteLine("3. Write contacts to a file");
+                Console.WriteLine("4. Read contacts from a file");
                 ch = Convert.ToInt32(Console.ReadLine());
                 if (ch == 1)//To create new Book
                 {
@@ -43,11 +45,53 @@ namespace AddressBook
                     if (dict.ContainsKey(bname_o))
                     {
                         p.addContact(dict[bname_o]);//function call to perform modification in the books
-
+                    }
+                }
+                if (ch == 3)
+                {
+                    Console.WriteLine("Writing Contacts to file");
+                    if (File.Exists(filePath))
+                    {
+                        using (StreamWriter stw = File.CreateText(filePath))
+                        {
+                            foreach (KeyValuePair<String, List<Contact>> kv in dict)
+                            {
+                                string a = kv.Key;
+                                List<Contact> list1 = (List<Contact>)kv.Value;
+                                stw.WriteLine("Address Book Name: " + a);
+                                foreach (Contact c in list1)
+                                {
+                                    stw.WriteLine(c);
+                                }
+                            }
+                            Console.WriteLine("Address Book written into the file successfully!!!");
+                        }
                     }
 
+                    else
+                    {
+                        Console.WriteLine("File doesn't exist!!!");
+                    }
                 }
-
+                if (ch == 4)
+                {
+                    Console.WriteLine("Reading contacts from a file");
+                    if (File.Exists(filePath))
+                    {
+                        using (StreamReader str = File.OpenText(filePath))
+                        {
+                            string s = "";
+                            while ((s = str.ReadLine()) != null)
+                            {
+                                Console.WriteLine(s);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("File doesn't exist!!!");
+                    }
+                }
             }
         }
         /// <summary>
