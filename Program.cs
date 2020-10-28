@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
+using CsvHelper;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Security.Authentication;
 using System.IO;
+using System.Globalization;
+
 namespace AddressBook
 {
     class Program
@@ -18,12 +21,14 @@ namespace AddressBook
             /// <summary>
             /// Creating Multiple Address Book and saving it with a name
             /// </summary>
-            while (ch != 5)
+            while (ch != 8)
             {
                 Console.WriteLine("1. Add a new Address Book");
                 Console.WriteLine("2. Add, edit or delete contacts in an exisiting address Book");
                 Console.WriteLine("3. Write contacts to a file");
                 Console.WriteLine("4. Read contacts from a file");
+                Console.WriteLine("5. Write contacts to CSV file");
+                Console.WriteLine("6. Read contacts from a CSV file");
                 ch = Convert.ToInt32(Console.ReadLine());
                 if (ch == 1)//To create new Book
                 {
@@ -92,7 +97,82 @@ namespace AddressBook
                         Console.WriteLine("File doesn't exist!!!");
                     }
                 }
+                if (ch == 5)//Write Contacts from a specified addressbook into a CSV File
+                {
+                    Console.WriteLine("Enter the Address Book Name which needs to be written");
+                    string name = Console.ReadLine();
+                    if (dict.ContainsKey(name))
+                    {
+                        WriteIntoCSVFile(dict, name);
+                        Console.WriteLine("Data inserted successfully");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Book Name Not Found");
+                    }
+                }
+                if (ch == 6)//Read contacts from the CSV File, then clear data in the file
+                {
+                    ReadFromCSVFile();
+                    Console.WriteLine("Data read successfully");
+                    ClearDataCSV();
+                }
             }
+        }
+        /// <summary>
+        /// Write into CSV File
+        /// </summary>
+        /// <param name="dictionary"></param>
+        /// <param name="bookName"></param>
+        public static void WriteIntoCSVFile(Dictionary<string, List<Contact>> dictionary, string bookName)
+        {
+            string filePath = @"C:\Users\HP\source\repos\CheckingAddress\Addressbook1.csv";
+            foreach (KeyValuePair<string, List<Contact>> kv in dictionary)
+            {
+                string BookName = kv.Key;
+                List<Contact> contacts = kv.Value;
+
+                if (BookName.Equals(bookName))
+                {
+                    using (StreamWriter stw = new StreamWriter(filePath))
+                    {
+                        using (CsvWriter writer = new CsvWriter(stw, CultureInfo.InvariantCulture))
+                        {
+                            writer.WriteRecords<Contact>(contacts);
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Read from the CSV File
+        /// </summary>
+        public static void ReadFromCSVFile()
+        {
+            string filePath = @"C:\Users\HP\source\repos\CheckingAddress\Addressbook1.csv";
+            Console.WriteLine("Reading from CSV File");
+
+            using (StreamReader str = new StreamReader(filePath))
+            {
+                using (CsvReader reader = new CsvReader(str, CultureInfo.InvariantCulture))
+                {
+                    var records = reader.GetRecords<Contact>().ToList();
+
+                    foreach (Contact c in records)
+                    {
+                        Console.WriteLine(c);
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Clear the CSV File
+        /// </summary>
+        public static void ClearDataCSV()
+        {
+            string filePathCSV = @"C:\Users\HP\source\repos\CheckingAddress\Addressbook1.csv";
+
+            File.WriteAllText(filePathCSV, string.Empty);
         }
         /// <summary>
         /// Adding a new contact to the address book and if saved it shows successfully saved
@@ -100,7 +180,7 @@ namespace AddressBook
         public void addContact(List<Contact> ContList) //To add to exisiting book
         {
             int choice_one = 0;
-            while (choice_one != 5)//Iterate till the user exits by inputting choice 5
+            while (choice_one != 10)//Iterate till the user exits by inputting choice 5
             {
                 Console.WriteLine("Enter your choice");
                 Console.WriteLine("1. Enter the contact");
