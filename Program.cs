@@ -6,6 +6,7 @@ using System.Runtime.Versioning;
 using System.Security.Authentication;
 using System.IO;
 using System.Globalization;
+using Newtonsoft.Json;
 
 namespace AddressBook
 {
@@ -29,6 +30,8 @@ namespace AddressBook
                 Console.WriteLine("4. Read contacts from a file");
                 Console.WriteLine("5. Write contacts to CSV file");
                 Console.WriteLine("6. Read contacts from a CSV file");
+                Console.WriteLine("7. Write contacts to a JSON File");
+                Console.WriteLine("8. Read contacts from a JSON file");
                 ch = Convert.ToInt32(Console.ReadLine());
                 if (ch == 1)//To create new Book
                 {
@@ -118,6 +121,27 @@ namespace AddressBook
                     Console.WriteLine("Data read successfully");
                     ClearDataCSV();
                 }
+                //UC15 Reading and writing from JSON
+                if (ch == 7)//Write Contacts from a specified addressbook into a Json File
+                {
+                    Console.WriteLine("Enter the Address Book Name which needs to be written");
+                    string name = Console.ReadLine();
+                    if (dict.ContainsKey(name))
+                    {
+                        WriteIntoJSONFile(dict, name);
+                        Console.WriteLine("Data inserted successfully");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Book Name Not Found");
+                    }
+                }
+                if (ch == 8)//Read Contacts from the Json file and display on console, then clear data in the file
+                {
+                    ReadFromJSONFile();
+                    Console.WriteLine("Data read successfully");
+                    JsonClearData();
+                }
             }
         }
         /// <summary>
@@ -174,6 +198,55 @@ namespace AddressBook
             string filePathCSV = @"C:\Users\HP\source\repos\CheckingAddress\Addressbook1.csv";
 
             File.WriteAllText(filePathCSV, string.Empty);
+        }
+        /// <summary>
+        /// Write into JSON File
+        /// </summary>
+        /// <param name="dictionary"></param>
+        /// <param name="bookName"></param>
+        public static void WriteIntoJSONFile(Dictionary<string, List<Contact>> dictionary, string bookName)
+        {
+            string filePathJSON = @"C:\Users\HP\source\repos\CheckingAddress\Addressbook1.json";
+
+            Console.WriteLine("Writing Data into JSON File");
+
+            foreach (KeyValuePair<string, List<Contact>> kv in dictionary)
+            {
+                string book = kv.Key;
+                List<Contact> contacts = kv.Value;
+
+                if (book.Equals(bookName))
+                {
+                    JsonSerializer jsonSerializer = new JsonSerializer();
+
+                    using (StreamWriter stw = new StreamWriter(filePathJSON))
+                    {
+                        jsonSerializer.Serialize(stw, contacts);
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Read data from the JSON File
+        /// </summary>
+        public static void ReadFromJSONFile()
+        {
+            Console.WriteLine("Reading Data from JSON File");
+            string filePathJSON = @"C:\Users\HP\source\repos\CheckingAddress\Addressbook1.json";
+            IList<Contact> records = JsonConvert.DeserializeObject<IList<Contact>>(File.ReadAllText(filePathJSON));
+
+            foreach (Contact record in records)
+            {
+                Console.WriteLine(record);
+            }
+        }
+        /// <summary>
+        /// Clear the data present in the JSON File
+        /// </summary>
+        public static void JsonClearData()
+        {
+            string filePathJSON = @"C:\Users\HP\source\repos\CheckingAddress\Addressbook1.json";
+            File.WriteAllText(filePathJSON, string.Empty);
         }
         /// <summary>
         /// Adding a new contact to the address book and if saved it shows successfully saved
